@@ -1,0 +1,101 @@
+/*Consulta SQL parala obtencion de mensajes recibiddos por cada usuario*/
+
+
+SELECT mensajes.mensaje AS "Mensaje Recibido",
+
+tbl1.nombre_usuario AS "Usuario Receptor",
+
+tbl2.nombre_usuario AS "Usuario Remitente"
+
+FROM trabajo_final_icaro.mensajes_recibidos
+
+JOIN mensajes ON mensajes.id_mensajes = mensajes_recibidos.mensaje
+
+JOIN usuario AS tbl1 ON tbl1.id_usuario = mensajes_recibidos.usuario
+
+left JOIN mensajes_enviados ON mensajes_enviados.mensaje = mensajes_recibidos.mensaje
+
+INNER JOIN usuario AS tbl2 ON tbl2.id_usuario = mensajes_enviados.usuario;
+
+/*Consulta SQL parala obtencion de mensajes enviados por cada usuario*/
+
+SELECT mensajes.mensaje AS "Mensaje enviado",
+
+tbl1.nombre_usuario AS "Usuario Remitente",
+
+tbl2.nombre_usuario AS "Usuario Receptor"
+
+FROM trabajo_final_icaro.mensajes_enviados
+
+JOIN mensajes ON mensajes.id_mensajes = mensajes_enviados.mensaje
+
+JOIN usuario AS tbl1 ON tbl1.id_usuario = mensajes_enviados.usuario
+
+left JOIN mensajes_recibidos ON mensajes_recibidos.mensaje = mensajes_enviados.mensaje
+
+INNER JOIN usuario AS tbl2 ON tbl2.id_usuario = mensajes_recibidos.usuario;
+
+/*Cantidad de usuarios por país*/
+
+
+SELECT pais.nombre_pais AS Pais,
+count(id_usuario) AS "Cantidad de usuarios"
+
+FROM trabajo_final_icaro.usuario
+
+left JOIN ciudad ON ciudad.id_ciudad = usuario.ciudad
+
+INNER JOIN pais ON pais.id_pais = ciudad.pais
+
+GROUP BY pais.nombre_pais;
+
+/*Cantidad de mensajes por usuario*/
+
+
+SELECT usuario, count(id_mensajes) AS "Cantidad de mensajes"
+
+FROM (SELECT usuario, id_mensajes FROM trabajo_final_icaro.mensajes_recibidos
+
+UNION ALL
+
+SELECT usuario, id_mensajes FROM trabajo_final_icaro.mensajes_enviados) t 
+
+group by usuario;
+
+/*Cantidad de mensajes leidos por usuario*/
+
+
+SELECT usuario.nombre_usuario, count(estado) AS "Cantidad de mensajes leídos"
+
+FROM trabajo_final_icaro.mensajes_recibidos
+
+JOIN usuario ON usuario.id_usuario = mensajes_recibidos.usuario
+
+WHERE estado = 1
+
+GROUP BY usuario.nombre_usuario;
+
+
+
+/*Cantidad de mensajes por fecha*/
+
+
+SELECT fecha, count(id_mensajes) AS "Cantidad de mensajes"
+
+FROM (SELECT fecha, id_mensajes FROM trabajo_final_icaro.mensajes_recibidos
+
+UNION ALL
+
+SELECT fecha, id_mensajes FROM trabajo_final_icaro.mensajes_enviados) t
+
+group by fecha;
+
+
+
+
+
+
+
+
+
+
